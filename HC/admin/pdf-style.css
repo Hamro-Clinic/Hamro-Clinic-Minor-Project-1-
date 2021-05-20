@@ -1,0 +1,19 @@
+@media print {
+    *{
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+        font-family: 'Verdana';
+
+    }
+    table,td{
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        
+    }
+    .clinic_name{
+        font-size: 30px;
+        font-weight: 400;
+    }
+}
