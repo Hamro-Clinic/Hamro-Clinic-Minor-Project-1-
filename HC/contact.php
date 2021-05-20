@@ -18,6 +18,7 @@
   <title>Contact | Hamro Clinic</title>
   <link rel="shortcut icon" type="image/ico" href="admin/images/icon.ico" />
 
+
   <script>
     function validateForm() {
       var name = document.forms["myForm"]["name"].value;
@@ -47,6 +48,7 @@
 
     }
   </script>
+  <script src="admin/bootstrap-4.6.0-dist/js/jquery.js"></script>
 </head>
 
 <body>
@@ -57,12 +59,12 @@
       include 'nav.php'; ?>
       <div class="container shadow-lg my-5">
         <div class="row">
-          <div class="col-lg-4 col-md-6 col-12 d-flex flex-column justify-content-center">
-            <span><i class="fas fa-mobile-alt"></i>&nbsp;9843807054</span><br>
+          <div class="col-sm-4 col-12 d-flex flex-column justify-content-center">
+            <span><i class="fas fa-mobile-alt"></i>&nbsp;XXXX-XXXXXX</span><br>
             <span><i class="fas fa-envelope"></i>&nbsp;hamroclinic@gmail.com</span><br>
-            <span><i class="fas fa-map-marker"></i>&nbsp;Mid-Banedswor,Kathmandu,Nepal</span><br>
+            <span><i class="fas fa-map-marker"></i>&nbsp;X-XXXXXX,Kathmandu,Nepal</span><br>
           </div>
-          <div class="col-lg-8 col-md-6 col-12 py-3 contact-div">
+          <div class="col-sm-8 col-12 py-3 contact-div">
             <p class="h1 text-center font-weight-normal">CONTACT US</p>
             <form name="myForm" class="w-75 mx-auto" onsubmit="return(validateForm())" method="post">
               <div class="form-group">
@@ -101,15 +103,59 @@
               } else {
                 echo "<div class='text-danger'>Error Occured</div>";
               }
-
-              mysqli_close($con);
             }
+            $select = "SELECT * FROM faqs";
+            $res = mysqli_query($con, $select);
             ?>
 
           </div>
         </div>
       </div>
+      <div class="container my-5 bg-white shadow-lg p-md-2 faq">
+        <div class="section">
+          <div class="h1 text-center font-weight-normal">FAQ's</div>
+          <div class="section-question d-flex flex-column justify-content-between mx-auto p-lg-3">
+            <?php
+            if (mysqli_num_rows($res)) {
+              while ($row = mysqli_fetch_assoc($res)) {
+            ?>
+                <div class="my-2 d-flex justify-content-between bg-light p-md-2">
+                  <div class="p-md-1">
+                    <div class="question<?php echo $row['id']; ?>"><?php echo $row['questions']; ?></div>
+                    <div class="answer<?php echo $row['id']; ?>" style="display: none;"><?php echo $row['answers']; ?></div>
+                  </div>
+                  <div class="sign">
+                    <div class="icon-plus<?php echo $row['id']; ?>"><i class="fas fa-plus-circle"></i></div>
+                    <div class="icon-minus<?php echo $row['id']; ?>" style="display: none;"><i class="fas fa-minus-circle"></i></div>
+                  </div>
+
+                </div>
+                <script>
+                  $(document).ready(function() {
+                    $(".icon-plus<?php echo $row['id']; ?>").click(function() {
+                      $(".icon-plus<?php echo $row['id']; ?>").hide();
+                      $(".answer<?php echo $row['id']; ?>").show();
+                      $(".icon-minus<?php echo $row['id']; ?>").show();
+
+                    });
+                    $(".icon-minus<?php echo $row['id']; ?>").click(function() {
+                      $(".icon-plus<?php echo $row['id']; ?>").show();
+                      $(".answer<?php echo $row['id']; ?>").hide();
+                      $(".icon-minus<?php echo $row['id']; ?>").hide();
+
+                    });
+                  });
+                </script>
+
+            <?php
+              }
+            }
+            ?>
+          </div>
+        </div>
+      </div>
     </div>
+
 
     <div class="footer-part">
       <?php include 'footer.php'; ?>
@@ -127,7 +173,9 @@
 
 
 
-  <script src="admin/bootstrap-4.6.0-dist/js/jquery.js"></script>
+
+
+
   <script src="admin/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
