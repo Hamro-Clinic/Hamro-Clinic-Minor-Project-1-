@@ -71,7 +71,7 @@
                                     </li>
                                     <li class="list-group-item">
                                         Schedule:
-                                        <?php echo $row['schedule']; ?>
+
                                     </li>
                                 </ul>
                                 </p>

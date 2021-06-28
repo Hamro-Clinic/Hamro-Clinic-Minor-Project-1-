@@ -106,7 +106,6 @@ if (isset($_GET['logout'])) {
     <div class="main_content p-sm-0 p-md-2">
         <div class="text-current_page">Manage User</div>
         <hr>
-        <p style="cursor:default;visibility:hidden;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus, minima nesciunt veritatis quas et alias quaerat amet, molestiae ea deserunt, obcaecati labore fugit exercitationem omnis nisi quod facere accusantium est?</p>
         <?php
         $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error());
 
@@ -123,13 +122,14 @@ if (isset($_GET['logout'])) {
             $email = mysqli_real_escape_string($con, $_POST['email']);
 
             $password = mysqli_real_escape_string($con, $_POST['password']);
-            $cpassword = mysqli_real_escape_string($con, $_POST['cpassword']);
+            // $cpassword = mysqli_real_escape_string($con, $_POST['cpassword']);
 
             $first_name = mysqli_real_escape_string($con, $_POST['fname']);
             $last_name = mysqli_real_escape_string($con, $_POST['lname']);
             $gender = mysqli_real_escape_string($con, $_POST['gender']);
             $dob = mysqli_real_escape_string($con, $_POST['dob']);
             $phone_number = mysqli_real_escape_string($con, $_POST['phone']);
+            $role = mysqli_real_escape_string($con, $_POST['role']);
 
             // first check the database to make sure 
             // a user does not already exist with the same email
@@ -153,10 +153,10 @@ if (isset($_GET['logout'])) {
             if (count($errors) == 0) {
 
                 $password = md5($password); //encrypt the password before saving in the database
-                $cpassword = md5($cpassword); //encrypt the password before saving in the database
+                // $cpassword = md5($cpassword); //encrypt the password before saving in the database
 
-                $query = "INSERT INTO admin (first_name,last_name,gender,dob,phone_number,email,password,cpassword,image) 
-                    VALUES('$first_name','$last_name','$gender','$dob',$phone_number,'$email','$password','$cpassword','admin-photo.png')";
+                $query = "INSERT INTO admin (first_name,last_name,gender,dob,phone_number,email,password,role,image) 
+                    VALUES('$first_name','$last_name','$gender','$dob',$phone_number,'$email','$password','$role','admin-photo.png')";
 
                 $res = mysqli_query($con, $query);
                 if ($res) {
@@ -267,6 +267,16 @@ if (isset($_GET['logout'])) {
                                 </div>
                             </div>
 
+                            <div class="row">
+                                <div class="form-group col-auto">
+                                    <label>Role</label>
+                                    <select class="form-control" name="role">
+                                        <option value="admin" selected>Admin</option>
+                                        <option value="lab_admin">Lab Admin</option>
+                                    </select>
+                                </div>
+                            </div>
+
                             <div class="row my-2">
                                 <div class="form-group col-sm-6">
                                     <label for="email">Email:</label>
@@ -309,10 +319,10 @@ if (isset($_GET['logout'])) {
                 <thead>
                     <tr>
                         <th>SN</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
+                        <th>Full Name</th>
                         <th>Email</th>
                         <th>Mobile</th>
+                        <th>Role</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -325,10 +335,10 @@ if (isset($_GET['logout'])) {
                     ?>
                             <tr>
                                 <td><?php echo ++$sn; ?></td>
-                                <td><?php echo $row['first_name']; ?></td>
-                                <td><?php echo $row['last_name']; ?></td>
+                                <td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
                                 <td><?php echo $row['email']; ?></td>
                                 <td><?php echo $row['phone_number']; ?></td>
+                                <td><?php echo $row['role']; ?></td>
                                 <td>
                                     <button class="btn btn-danger" data-toggle="modal" data-target="#dModal<?php echo $row['admin_id'] ?>" data-toggle="tooltip" title="Delete">
                                         <i class="far fa-trash-alt"></i>

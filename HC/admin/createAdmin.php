@@ -23,9 +23,9 @@
               dob DATE,
               phone_number VARCHAR(20) NOT NULL,
               email VARCHAR(50) NOT NULL,
-              password VARCHAR(50) NOT NULL,
-              cpassword VARCHAR(50) NOT NULL,
-              image VARCHAR(50) NOT NULL
+              password VARCHAR(255) NOT NULL,
+              image VARCHAR(50) NOT NULL,
+              role VARCHAR(20) NOT NULL
             )";
 
   // $sql = "DROP TABLE admin";

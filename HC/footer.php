@@ -32,7 +32,7 @@
                 <div class="h4">Contact</div>
                 <div><i class="fas fa-mobile-alt"></i>&nbsp;9843807054</div>
                 <div><i class="fas fa-envelope"></i>&nbsp;hamroclinic@gmail.com</div>
-                <div><i class="fas fa-map-marker"></i>&nbsp;Mid-Banedswor,Kathmandu,Nepal</div>
+                <div><i class="fas fa-map-marker"></i>&nbsp;Mid-Baneshwor,Kathmandu,Nepal</div>
             </div>
             <div class="map-section">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14130.374137128843!2d85.337974!3d27.698955!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xaf36b9b58903050f!2sAPEX%20COLLEGE!5e0!3m2!1sen!2snp!4v1621421787582!5m2!1sen!2snp" width="auto" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>

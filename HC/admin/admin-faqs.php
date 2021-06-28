@@ -33,190 +33,171 @@ if (isset($_GET['logout'])) {
 </head>
 
 <body>
+    <?php include 'admin-nav.php'; ?>
+    <div class="main_content p-sm-0 p-md-2">
+        <div class="text-current_page">Frequently Asked Questions</div>
+        <hr>
+        <?php
+        $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
+        if (isset($_POST['del'])) {
+            $id = $_POST['id'];
 
-    <!--FAQS index or home-->
+            $delete_query = "DELETE FROM faqs WHERE id=$id";
 
+            $re = mysqli_query($con, $delete_query);
 
-
-    <?php
-    $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
-    if (isset($_POST['del'])) {
-        $id = $_POST['id'];
-
-        $delete_query = "DELETE FROM faqs WHERE id=$id";
-
-        $re = mysqli_query($con, $delete_query);
-
-        if ($re) {
-            echo "<div class='d-inline-block alert alert-success text-success'>Succesfully deleted</div>";
-        } else {
-            echo "<div class='d-inline-block alert alert-danger text-danger'>Failed to delete</div>";
+            if ($re) {
+                echo "<div class='d-inline-block alert alert-success text-success'>Succesfully deleted</div>";
+            } else {
+                echo "<div class='d-inline-block alert alert-danger text-danger'>Failed to delete</div>";
+            }
         }
-    }
-    if (isset($_POST['edit'])) {
-        $id = $_POST['id'];
-        $question = $_POST['question'];
-        $answer = $_POST['answer'];
+        if (isset($_POST['edit'])) {
+            $id = $_POST['id'];
+            $question = $_POST['question'];
+            $answer = $_POST['answer'];
 
-        $update = "UPDATE faqs 
+            $update = "UPDATE faqs 
             SET questions='$question',
             answers='$answer'
             WHERE id=$id";
 
-        $re = mysqli_query($con, $update);
+            $re = mysqli_query($con, $update);
 
-        if ($re) {
-            echo "<div class='d-inline-block alert alert-success text-success'>Succesfully updated</div>";
-        } else {
-            echo "<div class='d-inline-block alert alert-danger text-danger'>Failed to update" . mysqli_error($con) . "</div>";
+            if ($re) {
+                echo "<div class='d-inline-block alert alert-success text-success'>Succesfully updated</div>";
+            } else {
+                echo "<div class='d-inline-block alert alert-danger text-danger'>Failed to update" . mysqli_error($con) . "</div>";
+            }
         }
-    }
+        ?>
 
+        <!--Add or create the FAQS-->
 
-    ?>
+        <?php
+        if (isset($_POST['create_faq'])) {
+            if (!empty($_POST['question']) && !empty($_POST['answer'])) {
+                $question = $_POST['question'];
+                $answer = $_POST['answer'];
+                $sql1 = "INSERT INTO faqs(questions,answers) VALUES ('$question','$answer')";
 
-    <!--Add or create the FAQS-->
+                $res = mysqli_query($con, $sql1);
 
-    <?php
-
-
-
-
-    if (isset($_POST['create_faq'])) {
-        $question = $_POST['question'];
-        $answer = $_POST['answer'];
-        $sql1 = "INSERT INTO faqs(questions,answers) VALUES ('$question','$answer')";
-
-        $res = mysqli_query($con, $sql1);
-
-        if ($res) {
-            echo "Inserted Succesfully";
-        } else {
-            echo "Not inserted";
+                if ($res) {
+                    echo "<div class='d-inline-block alert alert-success text-success'>Inserted Succesfully</div>";
+                } else {
+                    echo "<div class='d-inline-block alert alert-danger text-danger'>Not inserted</div>";
+                }
+            } else {
+                echo "<div class='d-inline-block alert alert-danger text-danger'>Please Fill All The Field</div>";
+            }
         }
-    }
-    ?>
-    <div class="container-fluid my-3 py-2">
-        <form action="admin-faqs.php" method="post" class="py-2 my-2">
-            <div class="col-md-6 col-12 mx-auto">
+        ?>
+        <div class="container my-5">
+            <form action="admin-faqs.php" method="post" class="col-md-6 bg-light mx-auto p-1 p-md-3">
                 <div class="form-group">Questions:<input type="text" name="question" class="form-control"></div>
                 <div class="form-group">Answer:<input type="text" name="answer" class="form-control"></div>
                 <input type="submit" name="create_faq" value="Add New FAQ" class="btn btn-success my-2">
-            </div>
+            </form>
+        </div>
 
-        </form>
-    </div>
+        <!--Edit FAQs-->
+        <div class="table-responsive container-fluid bg-white p-sm-1">
+            <table class="table table-bordered">
+                <tr>
+                    <th>SN</th>
+                    <th>Question</th>
+                    <th>Answers</th>
+                    <th>Action</th>
+                </tr>
 
+                <?php
+                $sn = 0;
 
+                $sql2 = "SELECT * FROM faqs";
+                $res2 = mysqli_query($con, $sql2);
+                if (mysqli_num_rows($res2) > 0) {
+                    while ($row = mysqli_fetch_assoc($res2)) {
+                ?>
+                        <tr>
+                            <td><?php echo ++$sn; ?></td>
+                            <td><?php echo $row['questions']; ?></td>
+                            <td><?php echo $row['answers']; ?></td>
+                            <td>
 
+                                <!-- Update Button trigger modal -->
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#uModal<?php echo $row['id'] ?>" data-toggle="tooltip" title="Update">
+                                    <i class="fas fa-user-edit"></i>
+                                </button>
 
-    <!--Edit FAQs-->
-    <div class="table-responsive container fluid">
-        <table class="table table-bordered">
-            <tr>
-                <th>Sno.</th>
-                <th>Question</th>
-                <th>Answers</th>
-                <th>Action</th>
-            </tr>
+                                <!-- Update Modal -->
+                                <div class="modal fade" id="uModal<?php echo $row['id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="dModalLabel">Edit</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="admin-faqs.php" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                    Questions:<input type="text" name="question" class="form-control" value="<?php echo $row['questions']; ?>">
+                                                    Answer: <input type="text" name="answer" class="form-control" value="<?php echo $row['answers']; ?>">
 
-            <?php
-            $sn = 0;
+                                                    <div class=" modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                        <input type="submit" value="Update" name="edit" class="btn btn-primary">
+                                                    </div>
+                                                </form>
+                                            </div>
 
-            $sql2 = "SELECT * FROM faqs";
-            $res2 = mysqli_query($con, $sql2);
-            if (mysqli_num_rows($res2) > 0) {
-                while ($row = mysqli_fetch_assoc($res2)) {
-            ?>
-                    <tr>
-                        <td><?php echo ++$sn; ?></td>
-                        <td><?php echo $row['questions']; ?></td>
-                        <td><?php echo $row['answers']; ?></td>
-                        <td>
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dModal<?php echo $row['id'] ?>">
-                                Delete
-                            </button>
-
-                            <!-- Modal -->
-                            <div class="modal fade" id="dModal<?php echo $row['id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="dModalLabel">Delete</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="admin-faqs.php" method="post" enctype="multipart/form-data">
-                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                Are you sure?
-
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                                    <input type="submit" value="Yes" name="del" class="btn btn-primary">
-                                                </div>
-                                            </form>
-                                        </div>
-
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uModal<?php echo $row['id'] ?>">
-                                Update
-                            </button>
+                                <!-- Delete Button trigger modal -->
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dModal<?php echo $row['id'] ?>" data-toggle="tooltip" title="Delete">
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="uModal<?php echo $row['id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="dModalLabel">Edit</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="dModal<?php echo $row['id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="dModalLabel">Delete</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="admin-faqs.php" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                    Are you sure?
+
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                        <input type="submit" value="Yes" name="del" class="btn btn-primary">
+                                                    </div>
+                                                </form>
+                                            </div>
+
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="admin-faqs.php" method="post" enctype="multipart/form-data">
-                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                Questions:<input type="text" name="question" class="form-control" value="<?php echo $row['questions']; ?>">
-                                                Answer: <input type="text" name="answer" class="form-control" value="<?php echo $row['answers']; ?>">
-
-
-                                                <div class=" modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                                    <input type="submit" value="Update" name="edit" class="btn btn-primary">
-                                                </div>
-                                            </form>
-                                        </div>
-
                                     </div>
                                 </div>
-                            </div>
-                        </td>
 
-
-                    </tr>
-            <?php
+                            </td>
+                        </tr>
+                <?php
+                    }
                 }
-            } else {
-                echo "There  are no FAQs to edit at this moment";
-            }
-
-
-
-            ?>
-
-
-
-
-        </table>
+                ?>
+            </table>
+        </div>
     </div>
-
 
     <script>
         if (window.history.replaceState) {
@@ -228,8 +209,6 @@ if (isset($_GET['logout'])) {
     <script src="bootstrap-4.6.0-dist/js/datatables.min.js"></script>
 
     <script src="bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
-
-
 
 </body>
 

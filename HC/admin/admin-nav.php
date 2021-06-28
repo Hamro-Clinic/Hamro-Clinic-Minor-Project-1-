@@ -30,12 +30,6 @@
                 </a>
             </li>
             <li>
-                <a href="admin-genpdf.php" data-toggle="tooltip" title="Generate Lab Report">
-                    <i class="fas fa-marker"></i>
-                    <span class="links_name">Generate Lab Report</span>
-                </a>
-            </li>
-            <li>
                 <a href="admin-labreport.php" data-toggle="tooltip" title="Upload Lab Report">
                     <i class="fas fa-file-upload"></i>
                     <span class="links_name">Upload Lab Report</span>
@@ -48,15 +42,33 @@
                 </a>
             </li>
             <li>
-                <a href="admin-contact.php" data-toggle="tooltip" title="Contact">
-                    <i class="fas fa-comment-dots"></i>
-                    <span class="links_name">Contact</span>
+                <a href="admin-department.php" data-toggle="tooltip" title="Manage Department">
+                    <i class="fas fa-building"></i>
+                    <span class="links_name">Manage Department</span>
                 </a>
             </li>
             <li>
                 <a href="admin-manage.php" data-toggle="tooltip" title="Manage User">
                     <i class="fas fa-users"></i>
                     <span class="links_name">Manage User</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-patient.php" data-toggle="tooltip" title="Patients">
+                    <i class="fas fa-user-injured"></i>
+                    <span class="links_name">Patients</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-contact.php" data-toggle="tooltip" title="Contact">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="links_name">Contact</span>
+                </a>
+            </li>
+            <li>
+                <a href="admin-Faqs.php" data-toggle="tooltip" title="FAQ's">
+                    <i class="fas fa-question"></i>
+                    <span class="links_name">FAQ's</span>
                 </a>
             </li>
             <li>

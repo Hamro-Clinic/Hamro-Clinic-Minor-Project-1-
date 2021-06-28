@@ -114,7 +114,6 @@ if (isset($_GET['logout'])) {
     <div class="main_content p-sm-0 p-md-2">
         <div class="text-current_page">Admin Profile</div>
         <hr>
-        <p style="cursor:default;visibility:hidden;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus, minima nesciunt veritatis quas et alias quaerat amet, molestiae ea deserunt, obcaecati labore fugit exercitationem omnis nisi quod facere accusantium est?</p>
         <div class="container shadow-lg text-justify profile-div p-md-5 bg-white">
             <div class="row">
                 <div class="col-sm-12 col-md-6 d-flex flex-wrap flex-column align-content-center justify-content-center">

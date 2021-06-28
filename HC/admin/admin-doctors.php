@@ -43,6 +43,9 @@ if (isset($_GET['logout'])) {
             // atpos = emailID.indexOf("@");
             // dotpos = emailID.lastIndexOf(".");
 
+            var password = document.forms["myForm"]["password"].value;
+            var cpassword = document.forms["myForm"]["cpassword"].value;
+
             var phone = document.forms["myForm"]["phone"].value;
             var nmc = document.forms["myForm"]["nmc"].value;
             var qualification = document.forms["myForm"]["qualification"].value;
@@ -63,6 +66,25 @@ if (isset($_GET['logout'])) {
             if (email == "") {
                 document.getElementById("para-email").innerHTML = "Email must be filled out";
                 count++;
+            }
+
+            if (password != cpassword) {
+                document.getElementById("para-cpassword").innerHTML = "Both Password area must be same";
+                document.getElementById("para-password").innerHTML = "Both Password area must be same";
+                count++;
+
+            }
+
+            if (password == "") {
+                document.getElementById("para-password").innerHTML = "Password must be filled out";
+                count++;
+
+            }
+
+            if (cpassword == "") {
+                document.getElementById("para-cpassword").innerHTML = "Password must be filled out";
+                count++;
+
             }
 
             if (phone.length != 10 || isNaN(phone)) {
@@ -106,7 +128,9 @@ if (isset($_GET['logout'])) {
     <div class="main_content p-sm-0 p-md-2">
         <div class="text-current_page">Doctors</div>
         <hr>
-        <p style="cursor:default;visibility:hidden;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus, minima nesciunt veritatis quas et alias quaerat amet, molestiae ea deserunt, obcaecati labore fugit exercitationem omnis nisi quod facere accusantium est?</p>
+        <?php
+        $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error());
+        ?>
 
         <!-- Start of add new doctor section -->
         <div class="insert-div">
@@ -173,17 +197,31 @@ if (isset($_GET['logout'])) {
 
                                 <div class="row my-3">
                                     <div class="form-group col-12">
-                                        <label for="dept">State</label>
-                                        <select id="dept" class="form-control" name="dept_id">
-                                            <option value="1" selected>Accident and emergency (A&E)</option>
-                                            <option value="2">Anesthetics</option>
-                                            <option value="3">Cardiology</option>
-                                            <option value="4">Critical Care</option>
-                                            <option value="5">Gastroenterology</option>
-                                            <option value="6">Gynecology</option>
-                                            <option value="7">Haematology</option>
-                                            <option value="8">Microbiology</option>
+                                        <label for="dept">Departments</label>
+                                        <select name="dept_id" id="dept" class="form-control">
+                                            <option>Choose Department</option>
+
+
+                                            <?php
+                                            $select_idept = "SELECT * FROM department";
+                                            $select_idept_result = mysqli_query($con, $select_idept);
+                                            if (mysqli_num_rows($select_idept_result) > 0) {
+                                                while ($row_idept = mysqli_fetch_assoc($select_idept_result)) {
+                                            ?>
+                                                    <option value="<?php echo $row_idept['department_id']; ?>"><?php echo $row_idept['department_name']; ?></option>
+                                            <?php
+                                                }
+                                            }
+                                            ?>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div class="row my-3">
+                                    <div class="col-12 form-group">
+                                        <label for="nmc">NMC Number:</label>
+                                        <input type="text" class="form-control" id="nmc" name="nmc" placeholder="Your NMC Number...">
+                                        <p id="para-nmc" class="text-danger"></p>
                                     </div>
                                 </div>
 
@@ -195,11 +233,16 @@ if (isset($_GET['logout'])) {
                                     </div>
                                 </div>
 
-                                <div class="row my-3">
-                                    <div class="col-12 form-group">
-                                        <label for="nmc">NMC Number:</label>
-                                        <input type="text" class="form-control" id="nmc" name="nmc" placeholder="Your NMC Number...">
-                                        <p id="para-nmc" class="text-danger"></p>
+                                <div class="row my-2">
+                                    <div class="form-group col-sm-6">
+                                        <label for="password">Password:</label>
+                                        <input type="password" class="form-control" id="password" placeholder="Enter Your Password Here.." name="password">
+                                        <p id="para-password" class="text-danger"></p>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label for="cpassword">Confirm Password:</label>
+                                        <input type="password" class="form-control" id="cpassword" placeholder="Confirm Your Password Here.." name="cpassword">
+                                        <p id="para-cpassword" class="text-danger"></p>
                                     </div>
                                 </div>
 
@@ -233,7 +276,6 @@ if (isset($_GET['logout'])) {
             </div>
 
             <?php
-            $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error());
             // If Add button is clicked ...
             if (isset($_POST['btn-insert'])) {
                 $first_name = $_POST['fname'];
@@ -245,6 +287,7 @@ if (isset($_GET['logout'])) {
                 $nmc = $_POST['nmc'];
                 $qualification = $_POST['qualification'];
                 $department_id = $_POST['dept_id'];
+                $password = mysqli_real_escape_string($con, $_POST['password']);
 
                 $filename = $_FILES["image"]["name"];
                 $tempname = $_FILES["image"]["tmp_name"];
@@ -253,15 +296,17 @@ if (isset($_GET['logout'])) {
                 $imgExt = strtolower(end($imgarr));
 
                 // $new_imgname=md5(time().$filename.'.'.$imgExt);
-                $new_imgname = time() . $filename . '.' . $imgExt;
+                $new_imgname = time() . '.' . $imgExt;
                 $allowedExtn = ["jpg", "png", "gif", "jpeg"];
 
                 if (in_array($imgExt, $allowedExtn)) {
                     $folder = "images/" . $new_imgname;
                     move_uploaded_file($tempname, $folder);
 
-                    $sql = "INSERT INTO doctor (first_name,last_name,gender,dob,phone_number,email,nmc,qualification,department_id,image,schedule)
-                    VALUES ('$first_name','$last_name','$gender','$dob',$phone_number,'$email',$nmc,'$qualification',$department_id,'$new_imgname','N/A')";
+                    $password = md5($password); //encrypt the password before saving in the database
+
+                    $sql = "INSERT INTO doctor (first_name,last_name,gender,dob,phone_number,email,nmc,qualification,department_id,image,password)
+                    VALUES ('$first_name','$last_name','$gender','$dob',$phone_number,'$email',$nmc,'$qualification',$department_id,'$new_imgname','$password')";
 
                     // Execute query
                     $result = mysqli_query($con, $sql);
@@ -328,26 +373,6 @@ if (isset($_GET['logout'])) {
                 if ($res) {
                     echo "<div class='text-success'>Succesfully updated</div>";
                     // move_uploaded_file($tempname, $folder);
-                } else {
-                    echo "<div class='text-danger'>Failed to update</div>";
-                }
-            }
-            ?>
-
-            <!-- code to update schedule -->
-            <?php
-            if (isset($_POST['update_schedule'])) {
-                $id = $_POST['id'];
-                $schedule = $_POST['schedule'];
-
-                $update_query = "UPDATE doctor 
-                                SET schedule='$schedule'
-                                WHERE doctor_id=$id";
-
-                $res = mysqli_query($con, $update_query);
-
-                if ($res) {
-                    echo "<div class='text-success'>Succesfully updated</div>";
                 } else {
                     echo "<div class='text-danger'>Failed to update</div>";
                 }
@@ -451,8 +476,6 @@ if (isset($_GET['logout'])) {
                                                             <hr>
                                                             <p>Qualification: <?php echo $row['qualification']; ?></p>
                                                             <hr>
-                                                            <p>Schedule: <?php echo $row['schedule']; ?></p>
-                                                            <hr>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -479,7 +502,6 @@ if (isset($_GET['logout'])) {
                                                     <form name="updateForm" action="admin-doctors.php" method="POST" enctype="multipart/form-data" onsubmit="return(validate_updateForm())">
 
                                                         <input type="hidden" name="id" value="<?php echo $row['doctor_id']; ?>">
-                                                        <input type="hidden" name="schedule" value="<?php echo $row['schedule']; ?>">
 
                                                         <div class="row my-3">
                                                             <div class="form-group col-sm-6">
@@ -526,16 +548,28 @@ if (isset($_GET['logout'])) {
 
                                                         <div class="row my-3">
                                                             <div class="form-group col-12">
-                                                                <label for="dept">State</label>
-                                                                <select id="dept" class="form-control" name="dept_id">
-                                                                    <option value="1" selected>Accident and emergency (A&E)</option>
-                                                                    <option value="2">Anesthetics</option>
-                                                                    <option value="3">Cardiology</option>
-                                                                    <option value="4">Critical Care</option>
-                                                                    <option value="5">Gastroenterology</option>
-                                                                    <option value="6">Gynecology</option>
-                                                                    <option value="7">Haematology</option>
-                                                                    <option value="8">Microbiology</option>
+                                                                <label for="dept">Departments</label>
+                                                                <select name="dept_id" id="dept" class="form-control">
+                                                                    <option>Choose Department</option>
+
+
+                                                                    <?php
+                                                                    $select_udept = "SELECT * FROM department";
+                                                                    $select_udept_result = mysqli_query($con, $select_udept);
+                                                                    if (mysqli_num_rows($select_udept_result) > 0) {
+                                                                        while ($row_dept = mysqli_fetch_assoc($select_udept_result)) {
+                                                                            if ($row['department_name'] == $row_dept['department_name']) {
+                                                                    ?>
+                                                                                <option value="<?php echo $row_dept['department_id']; ?>" selected><?php echo $row_dept['department_name']; ?></option>
+                                                                            <?php
+                                                                            } else {
+                                                                            ?>
+                                                                                <option value="<?php echo $row_dept['department_id']; ?>"><?php echo $row_dept['department_name']; ?></option>
+                                                                    <?php
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    ?>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -582,48 +616,11 @@ if (isset($_GET['logout'])) {
                                     </div>
                                     <!-- End of update modal -->
 
-                                    <!-- Start of Update Schedule -->
-                                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#schedule-modal<?php echo $row['doctor_id']; ?>" data-toggle="tooltip" title="Schedule">
-                                        <i class="fas fa-clock"></i>
-                                    </button>
-                                    <!-- Start of Update Schedule Modal -->
-                                    <div class="modal fade" id="schedule-modal<?php echo $row['doctor_id']; ?>" tabindex="-1" aria-labelledby="sModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="sModalLabel">Update Schedule</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="admin-doctors.php" method="POST" enctype="multipart/form-data">
-                                                        <input type="hidden" name="id" value="<?php echo $row['doctor_id']; ?>">
-
-                                                        <div class="row my-3">
-                                                            <div class="form-group col-12">
-                                                                <label for="schedule">Schedule:</label>
-                                                                <input type="text" class="form-control" id="schedule" value="<?php echo $row['schedule']; ?>" name="schedule">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                                            <input type="submit" value="Update" name="update_schedule" class="btn btn-success">
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <!-- End of Update schedule Modal -->
-
+                                    <!-- Delete Modal -->
                                     <button class="btn btn-danger" data-toggle="modal" data-target="#dModal<?php echo $row['doctor_id'] ?>" data-toggle="tooltip" title="Delete">
                                         <i class="far fa-trash-alt"></i>
                                     </button>
 
-                                    <!-- Delete Modal -->
                                     <div class="modal fade Modal3" id="dModal<?php echo $row['doctor_id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">

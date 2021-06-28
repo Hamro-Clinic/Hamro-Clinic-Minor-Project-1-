@@ -60,9 +60,9 @@
       <div class="container shadow-lg my-5">
         <div class="row">
           <div class="col-sm-4 col-12 d-flex flex-column justify-content-center">
-            <span><i class="fas fa-mobile-alt"></i>&nbsp;XXXX-XXXXXX</span><br>
+            <span><i class="fas fa-mobile-alt"></i>&nbsp;9843807054</span><br>
             <span><i class="fas fa-envelope"></i>&nbsp;hamroclinic@gmail.com</span><br>
-            <span><i class="fas fa-map-marker"></i>&nbsp;X-XXXXXX,Kathmandu,Nepal</span><br>
+            <span><i class="fas fa-map-marker"></i>&nbsp;Mid-Baneshwor,Kathmandu,Nepal</span><br>
           </div>
           <div class="col-sm-8 col-12 py-3 contact-div">
             <p class="h1 text-center font-weight-normal">CONTACT US</p>
@@ -122,7 +122,7 @@
                 <div class="my-2 d-flex justify-content-between bg-light p-md-2">
                   <div class="p-md-1">
                     <div class="question<?php echo $row['id']; ?>"><?php echo $row['questions']; ?></div>
-                    <div class="answer<?php echo $row['id']; ?>" style="display: none;"><?php echo $row['answers']; ?></div>
+                    <div class="answer<?php echo $row['id']; ?>" style="display: none;"><?php echo "Answer: " . $row['answers']; ?></div>
                   </div>
                   <div class="sign">
                     <div class="icon-plus<?php echo $row['id']; ?>"><i class="fas fa-plus-circle"></i></div>
@@ -156,28 +156,17 @@
       </div>
     </div>
 
-
     <div class="footer-part">
       <?php include 'footer.php'; ?>
     </div>
-
   </div>
-
 
   <script>
     if (window.history.replaceState) {
       window.history.replaceState(null, null, window.location.href);
     }
   </script>
-
-
-
-
-
-
-
   <script src="admin/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 
 </html>

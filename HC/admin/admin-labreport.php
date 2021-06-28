@@ -58,7 +58,6 @@ if (isset($_GET['logout'])) {
     <div class="main_content p-sm-0 p-md-2">
         <div class="text-current_page">Upload Lab Report</div>
         <hr>
-        <p style="cursor:default;visibility:hidden;">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Natus, minima nesciunt veritatis quas et alias quaerat amet, molestiae ea deserunt, obcaecati labore fugit exercitationem omnis nisi quod facere accusantium est?</p>
 
         <!-- start of upload section -->
         <div class="container shadow-lg p-md-5 bg-white">

@@ -21,6 +21,9 @@
 </head>
 
 <body>
+  <?php
+  $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error());
+  ?>
 
   <!-- Modal -->
   <div class="modal fade" id="about" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
@@ -48,10 +51,10 @@
   </div>
   <!-- Modal Ends -->
 
-  <!-- Modal -->
+  <!--Appointment Modal -->
   <div class="modal fade" id="appointment" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content bg-light">
         <div class="modal-header">
           <h5 class="modal-title" id="modalLabel">Make Appointment</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -59,25 +62,207 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="text-center p-md-3 my-3 h1">
-            Comming Soon...
-          </div>
+          <form action="home.php" method="POST">
+            <div class="conainer bg-white p-md-3">
+              <div class="h3 text-center font-weight-normal">Appointment Details</div>
+              <div class="form-group col-md-6 my-5">
+                <label>Departments</label>
+                <select name="dept" class="form-control" onchange="myfun(this.value)">
+                  <option>Choose Department</option>
+
+
+                  <?php
+                  $select_dept = "SELECT * FROM department";
+                  $select_dept_result = mysqli_query($con, $select_dept);
+                  if (mysqli_num_rows($select_dept_result) > 0) {
+                    while ($row = mysqli_fetch_assoc($select_dept_result)) {
+                  ?>
+                      <option value="<?php echo $row['department_id']; ?>"><?php echo $row['department_name']; ?></option>
+                  <?php
+                    }
+                  }
+                  ?>
+                </select>
+              </div>
+              <div class="form-group col-md-6 my-5">
+                <label for="">Doctor Name</label>
+                <select name="doctor_id" id="doctor_id" class="form-control">
+                  <option>Choose Doctor</option>
+                </select>
+              </div>
+              <div class="form-group col-md-6 my-5">
+                <label>Appointment Date</label>
+                <input type="date" name="date" class="form-control" onchange="date_fun(this.value)">
+              </div>
+              <div class="row" id="time_day_row">
+              </div>
+              <div class="form-group col-md-6 my-5">
+                <label>Reason For Appointment</label>
+                <textarea name="reason" cols="30" rows="3" class="form-control"></textarea>
+              </div>
+            </div>
+            <div class="container bg-white my-5 p-md-3">
+              <div class="h3 text-center font-weight-normal">Patient Details</div>
+              <div class="form-group col-md-6 my-5 p-0">
+                <label>Full Name</label>
+                <input type="text" name="full_name" class="form-control">
+              </div>
+              <div class="p-0 row my-5">
+                <div class="form-group col-md-6 pt-4">
+                  <label>Gender:</label>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input ml-1" type="radio" value="Male" name="gender" checked="checked">
+                    <label class="form-check-label" for="male">Male</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input ml-1" type="radio" value="Female" name="gender">
+                    <label class="form-check-label" for="female">Female</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input ml-1" type="radio" value="Others" name="gender">
+                    <label class="form-check-label" for="others">Others</label>
+                  </div>
+                </div>
+              </div>
+              <div class="p-0 row my-5">
+                <div class="form-group col-md-6">
+                  <label>Age</label>
+                  <input type="number" name="age" class="form-control">
+                </div>
+              </div>
+              <div class="p-0 row my-5">
+                <div class="form-group col-md-6">
+                  <label>Address</label>
+                  <input type="text" name="address" class="form-control">
+                </div>
+              </div>
+              <div class="p-0 row my-5">
+                <div class="form-group col-md-6">
+                  <label>Email</label>
+                  <input type="email" name="email" class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                  <label>Phone</label>
+                  <input type="text" name="phone" class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <input type="submit" value="Book Appointment" name="book" class="btn btn-danger">
+              <button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-  <!-- Modal Ends -->
+  <!--Appointment Modal Ends -->
 
   <div class="container-fluid px-0 d-flex flex-column justify-content-between" style="min-height:100vh;">
     <div class="except-footer">
       <div class="bg-home col-12 px-0">
         <?php $page = 'home';
         include 'nav.php'; ?>
+        <?php
+
+        ?>
         <div class="container-fluid p-md-3">
           <div class="row" style="min-height: 600px;">
             <div class="col-md-6 d-flex justify-content-center align-items-center flex-column">
               <div class="display-4 my-3">Lets Cure Together</div>
               <button class="btn btn-lg btn-outline-dark my-3" data-toggle="modal" data-target="#appointment">Make Appointment</button>
+              <?php
+              if (isset($_POST['book'])) {
+
+                $email = $_POST['email'];
+                $phone = $_POST['phone'];
+
+                $name = $_POST['full_name'];
+                $age = $_POST['age'];
+                $address = $_POST['address'];
+                $gender = $_POST['gender'];
+
+                $appointment_time = $_POST['appointment_time'];
+                $reason = $_POST['reason'];
+
+                $appointment_date = $_POST['date'];
+                $appointment_day = date("l", strtotime($appointment_date));
+                // $appointment_day = $_POST['appointment_day'];
+                $doctor_id = $_POST['doctor_id'];
+
+                $select_patient = "SELECT * FROM patient WHERE email='$email' OR phone_number='$phone'";
+                $select_patient_result = mysqli_query($con, $select_patient);
+                if ($select_patient_result) {
+                  if (mysqli_num_rows($select_patient_result) > 0) {
+                    $row_patient = mysqli_fetch_assoc($select_patient_result);
+                    $patient_id = $row_patient['patient_id'];
+                    $no_of_appointment = $row_patient['no_of_appointment'];
+                    $inr_no_of_appointment = $no_of_appointment + 1;
+
+                    $update_patient = "UPDATE patient
+                                  SET full_name='$name',
+                                  gender='$gender',
+                                  age=$age,
+                                  phone_number='$phone',
+                                  email='$email',
+                                  address='$address',
+                                  no_of_appointment=$inr_no_of_appointment
+                                  WHERE patient_id=$patient_id";
+
+                    $update_patient_result = mysqli_query($con, $update_patient);
+
+                    if ($update_patient_result) {
+
+                      $make_appointment = "INSERT INTO appointment(appointment_date,appointment_time,day,reason,doctor_id,patient_id)
+                      VALUES('$appointment_date','$appointment_time','$appointment_day','$reason','$doctor_id','$patient_id')";
+
+                      $make_appointment_result = mysqli_query($con, $make_appointment);
+
+                      if ($make_appointment_result) {
+                        echo "<div class='alert alert-success text-success'>Appointment made successfully</div>";
+                      } else {
+                        echo "<div class='alert alert-danger text-danger'>Failed to make Appointment</div>";
+                      }
+                    } else {
+                      echo "<div class='alert alert-danger text-danger'>Failed to Update Patient</div>";
+                    }
+                  } else {
+                    $insert_new_patient = "INSERT INTO patient(full_name,gender,age,phone_number,email,address,no_of_appointment)
+                                      VALUES('$name','$gender',$age,'$phone','$email','$address',1)";
+
+                    $insert_new_patient_result = mysqli_query($con, $insert_new_patient);
+                    if ($insert_new_patient_result) {
+
+                      $select_new_patient = "SELECT * FROM patient WHERE email='$email' OR phone_number='$phone'";
+                      $select_new_patient_result = mysqli_query($con, $select_new_patient);
+                      if ($select_new_patient_result) {
+                        if (mysqli_num_rows($select_new_patient_result) > 0) {
+                          $row_new_patient = mysqli_fetch_assoc($select_new_patient_result);
+                          $new_patient_id = $row_new_patient['patient_id'];
+
+                          $make_new_appointment = "INSERT INTO appointment(appointment_date,appointment_time,day,reason,doctor_id,patient_id)
+                          VALUES('$appointment_date','$appointment_time','$appointment_day','$reason','$doctor_id','$new_patient_id')";
+
+                          $make_new_appointment_result = mysqli_query($con, $make_new_appointment);
+
+                          if ($make_new_appointment_result) {
+                            echo "<div class='alert alert-success text-success'>Appointment made successfully From New Patient</div>";
+                          } else {
+                            echo "<div class='alert alert-danger text-danger'>Failed to make Appointment From New User</div>";
+                          }
+                        }
+                      } else {
+                        echo "<div class='alert alert-danger text-danger'>Failed to SELECT New Patient</div>";
+                      }
+                    } else {
+                      echo "<div class='alert alert-danger text-danger'>Failed to Insert New Patient</div>";
+                    }
+                  }
+                } else {
+                  echo "<div class='alert alert-danger text-danger'>Failed to SELECT Patient</div>";
+                }
+              }
+              ?>
             </div>
             <div class="col-md-6 d-flex justify-content-center align-items-center">
               <img src="admin/images/home.jpg" class="img-fluid rounded">
@@ -136,8 +321,43 @@
 
   </div>
 
+  <script>
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+  </script>
 
   <script src="admin/bootstrap-4.6.0-dist/js/jquery.js"></script>
+
+  <script>
+    function myfun(datavalue) {
+      $.ajax({
+        url: "ajax-dropdown-doctor.php",
+        type: 'POST',
+        data: {
+          datapost: datavalue
+        },
+        success: function(result) {
+          $('#doctor_id').html(result);
+        }
+      });
+    }
+
+    function date_fun(appointment_date) {
+      let doctor_id = $("#doctor_id").val();
+      $.ajax({
+        url: "ajax-appointment-time.php",
+        type: 'POST',
+        data: {
+          date: appointment_date,
+          doctor_id: doctor_id
+        },
+        success: function(result) {
+          $('#time_day_row').html(result);
+        }
+      });
+    }
+  </script>
 
   <script src="admin/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
 

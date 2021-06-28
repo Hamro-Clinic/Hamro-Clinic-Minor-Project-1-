@@ -1,15 +1,15 @@
 <?php
-// session_start();
+session_start();
 
-// if (!isset($_SESSION['email'])) {
-//     $_SESSION['msg'] = "You must log in first";
-//     header('location: index.php');
-// }
-// if (isset($_GET['logout'])) {
-//     session_destroy();
-//     unset($_SESSION['email']);
-//     header("location: index.php");
-// }
+if (!isset($_SESSION['email'])) {
+    $_SESSION['msg'] = "You must log in first";
+    header('location: index.php');
+}
+if (isset($_GET['logout'])) {
+    session_destroy();
+    unset($_SESSION['email']);
+    header("location: index.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -29,14 +29,14 @@
     <!-- Custom CSS  -->
     <link rel="stylesheet" href="css/admin-style.css">
 
-    <title>Dashboard - Admin | Hamro Clinic</title>
+    <title>Department - Admin | Hamro Clinic</title>
     <link rel="shortcut icon" type="image/ico" href="images/icon.ico" />
 </head>
 
 <body>
     <?php include 'admin-nav.php'; ?>
     <div class="main_content p-sm-0 p-md-2">
-        <div class="text-current_page">Dashboard</div>
+        <div class="text-current_page">Manage Department</div>
         <hr>
         <?php
         $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
@@ -71,26 +71,31 @@
         }
 
         if (isset($_POST['ins-submit'])) {
-            $depart = $_POST['department'];
+            if (!empty($_POST['department'])) {
+                $depart = $_POST['department'];
 
-            $insert_sql = "INSERT INTO department(department_name) VALUES ('$depart')";
+                $insert_sql = "INSERT INTO department(department_name) VALUES ('$depart')";
 
-            $res = mysqli_query($con, $insert_sql);
+                $res = mysqli_query($con, $insert_sql);
 
-            if ($res) {
-                echo "<div class='alert alert-success text-success'>Inserted</div>";
+                if ($res) {
+                    echo "<div class='d-inline-block alert alert-success text-success'>Inserted</div>";
+                } else {
+                    echo "<div class='d-inline-block alert alert-danger text-danger'>Failed</div>";
+                }
             } else {
-                echo "<div class='alert alert-danger text-danger'>Failed</div>";
+                echo "<div class='d-inline-block alert alert-danger text-danger'>Please Fill the Field</div>";
             }
         }
 
         ?>
-        <div class="contanier bg-white my-5 p-md-3 p-1">
-            <form action="admin-department.php" method="post">
-                <div class="form-group col-md-6 mx-auto">
+
+        <div class="contanier my-5">
+            <form action="admin-department.php" method="post" class="col-md-6 bg-light mx-auto p-1 p-md-3">
+                <div class="form-group">
                     <label>Department:</label>
                     <input type="text" name="department" class="form-control my-3">
-                    <input type="submit" name="ins-submit" value="Add Department" class="btn btn-success my-3" />
+                    <input type="submit" name="ins-submit" value="ADD" class="btn btn-success" />
                 </div>
             </form>
         </div>
@@ -114,41 +119,10 @@
                             <td><?php echo ++$sn; ?></td>
                             <td><?php echo $row['department_name']; ?></td>
                             <td>
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#dModal<?php echo $row['department_id'] ?>">
-                                    Delete
-                                </button>
-
-                                <!-- Modal -->
-                                <div class="modal fade" id="dModal<?php echo $row['department_id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="dModalLabel">Delete</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="admin-department.php" method="post">
-                                                    <input type="hidden" name="id" value="<?php echo $row['department_id']; ?>">
-                                                    Are you sure?
-
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                                                        <input type="submit" value="Yes" name="del" class="btn btn-primary">
-                                                    </div>
-                                                </form>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uModal<?php echo $row['department_id'] ?>">
-                                    Update
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#uModal<?php echo $row['department_id'] ?>" data-toggle="tooltip" title="Update">
+                                    <i class="fas fa-user-edit"></i>
                                 </button>
 
                                 <!-- Modal -->
@@ -178,6 +152,39 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#dModal<?php echo $row['department_id'] ?>" data-toggle="tooltip" title="Delete">
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="dModal<?php echo $row['department_id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="dModalLabel">Delete</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="admin-department.php" method="post">
+                                                    <input type="hidden" name="id" value="<?php echo $row['department_id']; ?>">
+                                                    Are you sure?
+
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                        <input type="submit" value="Yes" name="del" class="btn btn-primary">
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
                             </td>
 
 

@@ -27,7 +27,7 @@
               qualification VARCHAR(255) NOT NULL,
               department_id INT(5) NOT NULL,
               image VARCHAR(255) NOT NULL,
-              schedule VARCHAR(255),
+              password VARCHAR(255) NOT NULL,
 
               FOREIGN KEY(department_id) REFERENCES department(department_id)
             )";
