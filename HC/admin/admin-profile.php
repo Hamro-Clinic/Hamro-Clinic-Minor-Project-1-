@@ -92,8 +92,7 @@ if (isset($_GET['logout'])) {
 
         if ($row['password'] == $old_passwordmd5 && $new_cpassword == $new_password && $new_password != "") {
             $new_password = md5($new_password);
-            $new_cpassword = md5($new_cpassword);
-            $update_query = "UPDATE admin SET password='$new_password',cpassword='$new_cpassword' WHERE admin_id=$id";
+            $update_query = "UPDATE admin SET password='$new_password' WHERE admin_id=$id";
 
             $res = mysqli_query($con, $update_query);
 

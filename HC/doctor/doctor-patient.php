@@ -36,7 +36,7 @@ if (isset($_GET['logout'])) {
 <body>
     <?php include 'doctor-nav.php'; ?>
     <div class="main_content p-sm-0 p-md-2">
-        <div class="text-current_page">Recently Checked Patient Details</div>
+        <div class="text-current_page">Patient Details</div>
         <hr>
         <?php
         $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
@@ -70,7 +70,16 @@ if (isset($_GET['logout'])) {
                                 <td><?php echo $row['full_name']; ?></td>
                                 <td><?php echo $row['email']; ?></td>
                                 <td class="d-flex justify-content-between">
-                                    <span><?php echo $row['no_of_appointment']; ?></span>
+                                    <span>
+                                        <?php
+                                        $patient_id = $row['patient_id'];
+                                        $count_pd = "SELECT count(appointment_id) AS total_appointment FROM appointment
+                                                WHERE patient_id=$patient_id AND doctor_id=$doc_id";
+                                        $count_res = mysqli_query($con, $count_pd);
+                                        $c_row = mysqli_fetch_assoc($count_res);
+                                        echo $c_row['total_appointment'];
+                                        ?>
+                                    </span>
                                     <!-- Start of View Appointment Table Modal -->
                                     <button class="btn btn-dark" data-toggle="modal" data-target="#vaModal<?php echo $row['patient_id'] ?>" data-toggle="tooltip" title="View Appointments">
                                         <i class="fas fa-eye"></i>
@@ -104,11 +113,10 @@ if (isset($_GET['logout'])) {
                                                             </thead>
                                                             <tbody>
                                                                 <?php
-                                                                $patient_id = $row['patient_id'];
                                                                 $select_appointment = "SELECT * FROM appointment AS a
                                                                                     INNER JOIN doctor AS d
                                                                                     ON (a.doctor_id=d.doctor_id)
-                                                                                    WHERE patient_id=$patient_id
+                                                                                    WHERE patient_id=$patient_id AND a.doctor_id=$doc_id
                                                                                     ORDER BY appointment_date DESC";
                                                                 $select_appointment_result = mysqli_query($con, $select_appointment);
                                                                 if (mysqli_num_rows($select_appointment_result) > 0) {

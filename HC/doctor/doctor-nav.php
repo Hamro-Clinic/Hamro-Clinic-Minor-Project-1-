@@ -24,6 +24,12 @@
                 </a>
             </li>
             <li>
+                <a href="doctor-profile.php" data-toggle="tooltip" title="Doctor Profile">
+                    <i class="far fa-address-card"></i>
+                    <span class="links_name">Doctor Profile</span>
+                </a>
+            </li>
+            <li>
                 <a href="doctor-schedule.php" data-toggle="tooltip" title="Schedule">
                     <i class="fas fa-clock"></i>
                     <span class="links_name">Manage Schedule</span>
