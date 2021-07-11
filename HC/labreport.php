@@ -46,20 +46,37 @@
                     $result = mysqli_query($con, $sql);
                     if (mysqli_num_rows($result) > 0) {
                         while ($row = mysqli_fetch_assoc($result)) { ?>
-                            <div class="container alert alert-dark d-flex flex-column align-items-center">
-                                <div class="row my-2">
-                                    <p class="text-success text-center h4">Report Found</p>
+                            <div class="card text-center mx-auto mb-2 result-card" style="width: 30rem;">
+                                <div class="card-header">
+                                    Search Results
+                                    <button type="button" class="close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
-                                <div class="row my-2">
-                                    <span class="m-2"><?php echo $row['file']; ?></span>
-                                    <a href="admin/reports/<?php echo $row['file']; ?>" class="btn btn-warning" target="_blank">View</a>
-                                    <a href="download.php?file=admin/reports/<?php echo $row['file']; ?>" class="btn btn-danger mx-2">Download</a>
+                                <div class="card-body">
+                                    <h5 class="card-title">Report Found!!</h5>
+                                    <p class="card-text"><?php echo $row['file']; ?></p>
+                                    <div>
+                                        <a href="admin/reports/<?php echo $row['file']; ?>" class="btn btn-warning" target="_blank">View</a>
+                                        <a href="download.php?file=admin/reports/<?php echo $row['file']; ?>" class="btn btn-danger mx-2">Download</a>
+                                    </div>
                                 </div>
-
                             </div>
-                <?php  }
+                        <?php  }
                     } else {
-                        echo "<div class='container alert alert-dark text-center text-danger h4'>No Report Found</div>";
+                        ?>
+                        <div class="card text-center mx-auto mt-5 result-card" style="width: 30rem;">
+                            <div class="card-header">
+                                Search Results
+                                <button type="button" class="close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Report Not Found!!</h5>
+                            </div>
+                        </div>
+                <?php
                     }
                 }
                 ?>
@@ -83,6 +100,15 @@
 
 
     <script src="admin/bootstrap-4.6.0-dist/js/jquery.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('.close').on('click', function() {
+                $('.result-card').hide();
+            });
+        });
+    </script>
+
     <script src="admin/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

@@ -26,6 +26,9 @@ if (isset($_GET['logout'])) {
     <link rel="stylesheet" href="../admin/fontawesome/all.min.css">
     <link rel="stylesheet" href="../admin/fontawesome/fontawesome.min.css">
 
+    <!-- Jquery Datatables  -->
+    <link href="../admin/bootstrap-4.6.0-dist/css/datatables.min.css" rel="stylesheet">
+
     <!-- Custom CSS  -->
     <link rel="stylesheet" href="../admin/css/admin-style.css">
 
@@ -46,7 +49,7 @@ if (isset($_GET['logout'])) {
         $doc_id = $s_row['doctor_id'];
         ?>
         <div class="container-fluid bg-white p-md-1">
-            <table class="table table-hover table-bordered display" id="display-query">
+            <table class="table table-hover table-bordered display" id="display-patient">
                 <thead>
                     <tr>
                         <th>SN</th>
@@ -206,7 +209,14 @@ if (isset($_GET['logout'])) {
 
     <script src="../admin/bootstrap-4.6.0-dist/js/jquery.js"></script>
 
+    <script src="../admin/bootstrap-4.6.0-dist/js/datatables.min.js"></script>
     <script src="../admin/bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#display-patient").DataTable();
+        });
+    </script>
 </body>
 
 </html>

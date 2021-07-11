@@ -32,7 +32,52 @@ if (mysqli_num_rows($dis_res) > 0) {
                 ?>
             </td>
             <td><?php echo $dis_row['reason']; ?></td>
-            <td><?php echo $dis_row['patient_id']; ?></td>
+            <td>
+                <?php
+                $p_id = $dis_row['patient_id'];
+                $display_patient = "SELECT * FROM patient WHERE patient_id=$p_id";
+                $display_patient_result = mysqli_query($conn, $display_patient);
+                $row = mysqli_fetch_assoc($display_patient_result);
+                ?>
+                <!-- Start of View Profile Modal -->
+                <button class="btn btn-dark" data-toggle="modal" data-target="#vpModal<?php echo $row['patient_id'] ?>" data-toggle="tooltip" title="View Profile">
+                    <i class="far fa-id-badge"></i>
+                </button>
+
+                <!-- View Profile Modal -->
+                <div class="modal fade" id="vpModal<?php echo $row['patient_id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="dModalLabel">View Profile</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Content will be here. -->
+                                <hr>
+                                <div>Full Name:<?php echo " " . $row['full_name']; ?></div>
+                                <hr>
+                                <div>Gender:<?php echo " " . $row['gender']; ?></div>
+                                <hr>
+                                <div>Age:<?php echo " " . $row['age']; ?></div>
+                                <hr>
+                                <div>Phone Number:<?php echo " " . $row['phone_number']; ?></div>
+                                <hr>
+                                <div>Email:<?php echo " " . $row['email']; ?></div>
+                                <hr>
+                                <div>Address:<?php echo " " . $row['address']; ?></div>
+                                <hr>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of View Profile Modal-->
+            </td>
         </tr>
 <?php
     }

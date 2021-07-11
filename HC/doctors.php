@@ -69,8 +69,86 @@
                                         Qualification:
                                         <?php echo $row['qualification']; ?>
                                     </li>
-                                    <li class="list-group-item">
-                                        Schedule:
+                                    <li class="list-group-item font-weight-normal d-flex justify-content-center">
+
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#dModal<?php echo $row['doctor_id'] ?>" data-toggle="tooltip" title="Schedule">
+                                            <i class="fas fa-eye"><span class="font-weight-normal ml-2">Schedule</span></i>
+                                        </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="dModal<?php echo $row['doctor_id'] ?>" tabindex="-1" aria-labelledby="dModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="dModalLabel">Schedule</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <?php
+                                                        $this_doc = $row['doctor_id'];
+                                                        $dis_schedule = "SELECT * FROM schedule 
+                                                                        WHERE doctor_id=$this_doc
+                                                                        ORDER BY FIELD(day,'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday')";
+                                                        $dis_schedule_res = mysqli_query($con, $dis_schedule);
+                                                        ?>
+                                                        <div class="container table-responsive p-md-1 bg-white my-5">
+                                                            <table class="table table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>SN</th>
+                                                                        <th>Day</th>
+                                                                        <th>Start Time</th>
+                                                                        <th>End Time</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <?php
+                                                                    if (mysqli_num_rows($dis_schedule_res) > 0) {
+                                                                        $sn = 0;
+                                                                        while ($nrow = mysqli_fetch_assoc($dis_schedule_res)) {
+                                                                    ?>
+                                                                            <tr>
+                                                                                <td><?php echo ++$sn; ?></td>
+                                                                                <td><?php echo $nrow['day']; ?></td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    $stime = strtotime($nrow['start_time']);
+                                                                                    echo date("h:i A", $stime);
+                                                                                    ?>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <?php
+                                                                                    $etime = strtotime($nrow['end_time']);
+                                                                                    echo date("h:i A", $etime);
+                                                                                    ?>
+                                                                                </td>
+                                                                            </tr>
+                                                                        <?php
+                                                                        }
+                                                                    } else {
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td colspan="4">
+                                                                                <div class='text-center h5'>No Schedule Found</div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php
+                                                                    }
+                                                                    ?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-dark" data-dismiss="modal">Cancel</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Schedule Modal ends  -->
 
                                     </li>
                                 </ul>

@@ -35,16 +35,6 @@ if (isset($_GET['logout'])) {
     <title>Patients - Admin | Hamro Clinic</title>
     <link rel="shortcut icon" type="image/ico" href="images/icon.ico" />
 
-    <script>
-        function validateForm() {
-            var report = document.forms["myForm"]["report"].value;
-
-            if (report == "") {
-                document.getElementById("para-report").innerHTML = "Please Upload First";
-                return false;
-            }
-        }
-    </script>
 </head>
 
 <body>
@@ -71,6 +61,7 @@ if (isset($_GET['logout'])) {
         if (isset($_POST['send'])) {
 
             $email = $_POST['email'];
+            $id = $_POST['id'];
 
             $filename = $_FILES["report"]["name"];
             $tempname = $_FILES["report"]["tmp_name"];
@@ -83,36 +74,39 @@ if (isset($_GET['logout'])) {
             $new_filename = $new_file_noext . '.' . $fileExt;
             $folder = "reports/" . $new_filename;
             $allowedExtn = ["pdf"];
+            if (!empty($filename)) {
+                if (!in_array($fileExt, $allowedExtn)) {
+                    echo "<div class='text-danger'>Invalid File Type</div>";
+                } elseif ($filesize > 2000000) {
+                    echo "<div class='text-danger'>File is to large(Should be less than 2Mb)</div>";
+                } else {
+                    if (move_uploaded_file($tempname, $folder)) {
+                        $sql = "INSERT INTO report(file,email,patient_id)
+                    VALUES('$new_filename','$email',$id)";
 
-            if (!in_array($fileExt, $allowedExtn)) {
-                echo "<div class='text-danger'>Invalid File Type</div>";
-            } elseif ($filesize > 2000000) {
-                echo "<div class='text-danger'>File is to large(Should be less than 2Mb)</div>";
-            } else {
-                if (move_uploaded_file($tempname, $folder)) {
-                    $sql = "INSERT INTO report(file,email)
-                    VALUES('$new_filename','$email')";
+                        $res = mysqli_query($con, $sql);
 
-                    $res = mysqli_query($con, $sql);
+                        if ($res) {
+                            //Mail method will be here
+                            $to_email = $email;
+                            $subject = "Your Report is now available";
+                            $body = "Please visit our website(http://localhost/HC/labreport.php) to download your report. Your report code is " . $new_file_noext;
+                            $headers = "From: s.timalsina2160@gmail.com";
 
-                    if ($res) {
-                        //Mail method will be here
-                        $to_email = $email;
-                        $subject = "Your Report is now available";
-                        $body = "Please visit our website(http://localhost/HC/labreport.php) to download your report. Your report code is " . $new_file_noext;
-                        $headers = "From: s.timalsina2160@gmail.com";
-
-                        if (mail($to_email, $subject, $body, $headers)) {
-                            echo "<div class='text-success'>Email successfully sent to $to_email</div>";
+                            if (mail($to_email, $subject, $body, $headers)) {
+                                echo "<div class='text-success'>Email successfully sent to $to_email</div>";
+                            } else {
+                                echo "<div class='text-danger'>Failed to send Email to $to_email</div>";
+                            }
                         } else {
-                            echo "<div class='text-danger'>Failed to send Email to $to_email</div>";
+                            echo "<div class='text-danger'>Unable to insert</div>";
                         }
                     } else {
-                        echo "<div class='text-danger'>Unable to insert</div";
+                        echo "<div class='text-danger'>Unable to move_upload_file</div>";
                     }
-                } else {
-                    echo "<div class='text-danger'>Unable to move_upload_file</div";
                 }
+            } else {
+                echo "<div class='text-danger my-2'>Please Upload File</div>";
             }
         }
         ?>
@@ -141,7 +135,16 @@ if (isset($_GET['logout'])) {
                                 <td><?php echo $row['full_name']; ?></td>
                                 <td><?php echo $row['email']; ?></td>
                                 <td class="d-flex justify-content-between">
-                                    <span><?php echo $row['no_of_appointment']; ?></span>
+                                    <span>
+                                        <?php
+                                        $patient_id = $row['patient_id'];
+                                        $count_pd = "SELECT count(appointment_id) AS total_appointment FROM appointment
+                                                WHERE patient_id=$patient_id";
+                                        $count_res = mysqli_query($con, $count_pd);
+                                        $c_row = mysqli_fetch_assoc($count_res);
+                                        echo $c_row['total_appointment'];
+                                        ?>
+                                    </span>
                                     <!-- Start of View Appointment Table Modal -->
                                     <button class="btn btn-dark" data-toggle="modal" data-target="#vaModal<?php echo $row['patient_id'] ?>" data-toggle="tooltip" title="View Appointments">
                                         <i class="fas fa-eye"></i>
@@ -277,11 +280,9 @@ if (isset($_GET['logout'])) {
                                                         <input type="hidden" name="id" value="<?php echo $row['patient_id']; ?>">
                                                         <input type="hidden" name="email" value="<?php echo $row['email']; ?>">
                                                         <!-- Content will be here..  -->
+
                                                         <div class="form-group">
-                                                            <div class="input-group">
-                                                                <input type="file" class="form-control" id="report" name="report">
-                                                            </div>
-                                                            <p id="para-report" class="text-danger"></p>
+                                                            <input type="file" class="form-control" id="report" name="report">
                                                         </div>
 
                                                         <div class="modal-footer">
@@ -345,6 +346,7 @@ if (isset($_GET['logout'])) {
     </script>
 
     <script src="bootstrap-4.6.0-dist/js/jquery.js"></script>
+
     <script src="bootstrap-4.6.0-dist/js/datatables.min.js"></script>
 
     <script src="bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>

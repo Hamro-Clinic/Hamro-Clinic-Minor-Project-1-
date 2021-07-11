@@ -165,7 +165,8 @@ For expanding the sidebar, */
 
 .dashboard-cards {
   display: flex;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 50px;
   flex-wrap: wrap;
 }
 

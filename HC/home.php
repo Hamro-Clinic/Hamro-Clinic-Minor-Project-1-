@@ -62,13 +62,13 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="home.php" method="POST">
+          <form action="home.php" method="POST" name="myForm" onsubmit="return(validateForm())">
             <div class="conainer bg-white p-md-3">
               <div class="h3 text-center font-weight-normal">Appointment Details</div>
               <div class="form-group col-md-6 my-5">
                 <label>Departments</label>
                 <select name="dept" class="form-control" onchange="myfun(this.value)">
-                  <option>Choose Department</option>
+                  <option value="default">Choose Department</option>
 
 
                   <?php
@@ -83,22 +83,26 @@
                   }
                   ?>
                 </select>
+                <small id="para-dept" class="text-danger"></small>
               </div>
               <div class="form-group col-md-6 my-5">
                 <label for="">Doctor Name</label>
                 <select name="doctor_id" id="doctor_id" class="form-control">
-                  <option>Choose Doctor</option>
+                  <option value="default">Choose Doctor</option>
                 </select>
+                <small id="para-doc" class="text-danger"></small>
               </div>
               <div class="form-group col-md-6 my-5">
                 <label>Appointment Date</label>
                 <input type="date" name="date" class="form-control" onchange="date_fun(this.value)">
+                <small id="para-date" class="text-danger"></small>
               </div>
               <div class="row" id="time_day_row">
               </div>
               <div class="form-group col-md-6 my-5">
                 <label>Reason For Appointment</label>
                 <textarea name="reason" cols="30" rows="3" class="form-control"></textarea>
+                <small id="para-reason" class="text-danger"></small>
               </div>
             </div>
             <div class="container bg-white my-5 p-md-3">
@@ -106,6 +110,7 @@
               <div class="form-group col-md-6 my-5 p-0">
                 <label>Full Name</label>
                 <input type="text" name="full_name" class="form-control">
+                <small id="para-pname" class="text-danger"></small>
               </div>
               <div class="p-0 row my-5">
                 <div class="form-group col-md-6 pt-4">
@@ -128,22 +133,26 @@
                 <div class="form-group col-md-6">
                   <label>Age</label>
                   <input type="number" name="age" class="form-control">
+                  <small id="para-age" class="text-danger"></small>
                 </div>
               </div>
               <div class="p-0 row my-5">
                 <div class="form-group col-md-6">
                   <label>Address</label>
                   <input type="text" name="address" class="form-control">
+                  <small id="para-address" class="text-danger"></small>
                 </div>
               </div>
               <div class="p-0 row my-5">
                 <div class="form-group col-md-6">
                   <label>Email</label>
                   <input type="email" name="email" class="form-control">
+                  <small id="para-email" class="text-danger"></small>
                 </div>
                 <div class="form-group col-md-6">
                   <label>Phone</label>
                   <input type="text" name="phone" class="form-control">
+                  <small id="para-phone" class="text-danger"></small>
                 </div>
               </div>
             </div>
@@ -196,8 +205,6 @@
                   if (mysqli_num_rows($select_patient_result) > 0) {
                     $row_patient = mysqli_fetch_assoc($select_patient_result);
                     $patient_id = $row_patient['patient_id'];
-                    $no_of_appointment = $row_patient['no_of_appointment'];
-                    $inr_no_of_appointment = $no_of_appointment + 1;
 
                     $update_patient = "UPDATE patient
                                   SET full_name='$name',
@@ -205,8 +212,7 @@
                                   age=$age,
                                   phone_number='$phone',
                                   email='$email',
-                                  address='$address',
-                                  no_of_appointment=$inr_no_of_appointment
+                                  address='$address'
                                   WHERE patient_id=$patient_id";
 
                     $update_patient_result = mysqli_query($con, $update_patient);
@@ -219,7 +225,7 @@
                       $make_appointment_result = mysqli_query($con, $make_appointment);
 
                       if ($make_appointment_result) {
-                        echo "<div class='alert alert-success text-success'>Appointment made successfully</div>";
+                        echo "<div class='alert alert-success text-success'>Appointment made successfully From Existing Patient</div>";
                       } else {
                         echo "<div class='alert alert-danger text-danger'>Failed to make Appointment</div>";
                       }
@@ -227,8 +233,8 @@
                       echo "<div class='alert alert-danger text-danger'>Failed to Update Patient</div>";
                     }
                   } else {
-                    $insert_new_patient = "INSERT INTO patient(full_name,gender,age,phone_number,email,address,no_of_appointment)
-                                      VALUES('$name','$gender',$age,'$phone','$email','$address',1)";
+                    $insert_new_patient = "INSERT INTO patient(full_name,gender,age,phone_number,email,address)
+                                      VALUES('$name','$gender',$age,'$phone','$email','$address')";
 
                     $insert_new_patient_result = mysqli_query($con, $insert_new_patient);
                     if ($insert_new_patient_result) {
@@ -248,7 +254,7 @@
                           if ($make_new_appointment_result) {
                             echo "<div class='alert alert-success text-success'>Appointment made successfully From New Patient</div>";
                           } else {
-                            echo "<div class='alert alert-danger text-danger'>Failed to make Appointment From New User</div>";
+                            echo "<div class='alert alert-danger text-danger'>Failed to make Appointment From New Patient</div>";
                           }
                         }
                       } else {
@@ -356,6 +362,89 @@
           $('#time_day_row').html(result);
         }
       });
+    }
+
+    function validateForm() {
+      var count = 0;
+      var pname = $("input[name='full_name']").val();
+      var age = $("input[name='age']").val();
+      var address = $("input[name='address']").val();
+      var email = $("input[name='email']").val();
+      var phone = $("input[name='phone']").val();
+      var date = $("input[name='date']").val();
+      var reason = $("textarea[name='reason']").val();
+      var doc = $("select[name='doctor_id']").val();
+      var dept = $("select[name='dept']").val();
+
+      if (pname == "") {
+        document.getElementById("para-pname").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-pname").innerHTML = "";
+      }
+
+      if (age == "") {
+        document.getElementById("para-age").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-age").innerHTML = "";
+      }
+
+      if (address == "") {
+        document.getElementById("para-address").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-address").innerHTML = "";
+      }
+
+      if (email == "") {
+        document.getElementById("para-email").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-email").innerHTML = "";
+      }
+
+      if (phone == "") {
+        document.getElementById("para-phone").innerHTML = "This field is required";
+        count++;
+      } else if (isNaN(phone)) {
+        document.getElementById("para-phone").innerHTML = "Invalid Number";
+        count++;
+      } else {
+        document.getElementById("para-phone").innerHTML = "";
+      }
+
+      if (reason == "") {
+        document.getElementById("para-reason").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-reason").innerHTML = "";
+      }
+
+      if (date == "") {
+        document.getElementById("para-date").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-date").innerHTML = "";
+      }
+
+      if (doc == "default") {
+        document.getElementById("para-doc").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-doc").innerHTML = "";
+      }
+
+      if (dept == "default") {
+        document.getElementById("para-dept").innerHTML = "This field is required";
+        count++;
+      } else {
+        document.getElementById("para-dept").innerHTML = "";
+      }
+
+      if (count != 0) {
+        return false;
+      }
     }
   </script>
 

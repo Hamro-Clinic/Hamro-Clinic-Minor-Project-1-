@@ -40,6 +40,12 @@ $res = mysqli_query($conn, $sql);
                     <option value="<?php echo date("H:i:s", $time); ?>">
                         <?php echo date("h:i A", $time); ?>
                     </option>
+                <?php
+                } else {
+                ?>
+                    <option value="<?php echo date("H:i:s", $time); ?>" disabled>
+                        <?php echo date("h:i A", $time); ?>
+                    </option>
         <?php
                 }
             }

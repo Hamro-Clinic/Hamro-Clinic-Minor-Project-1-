@@ -22,8 +22,7 @@
               age INT(5) NOT NULL,
               phone_number VARCHAR(20) NOT NULL,
               email VARCHAR(50) NOT NULL,
-              address VARCHAR(255) NOT NULL,
-              no_of_appointment INT NOT NULL
+              address VARCHAR(255) NOT NULL
             )";
 
     // $sql = "DROP TABLE admin";

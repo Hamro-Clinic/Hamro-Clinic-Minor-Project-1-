@@ -7,6 +7,13 @@
 </head>
 
 <body>
+    <?php
+    $nav_con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
+    $which_ad = "SELECT * FROM admin WHERE email='{$_SESSION['email']}'";
+    $ad_res = mysqli_query($nav_con, $which_ad);
+    $one_row1 = mysqli_fetch_assoc($ad_res);
+    $role = $one_row1['role'];
+    ?>
     <div class="sidebar">
         <div class="logo_content">
             <div class="logo">
@@ -16,68 +23,110 @@
             </div>
             <i class="fa fa-bars" id="btn-ham"></i>
         </div>
-        <ul class="sidebar-menu">
-            <li>
-                <a href="admin-dashboard.php" data-toggle="tooltip" title="Dashboard">
-                    <i class="fas fa-th-large"></i>
-                    <span class="links_name">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-profile.php" data-toggle="tooltip" title="Admin Profile">
-                    <i class="far fa-address-card"></i>
-                    <span class="links_name">Admin Profile</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-labreport.php" data-toggle="tooltip" title="Upload Lab Report">
-                    <i class="fas fa-file-upload"></i>
-                    <span class="links_name">Upload Lab Report</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-doctors.php" data-toggle="tooltip" title="Doctors">
-                    <i class="fas fa-stethoscope"></i>
-                    <span class="links_name">Doctors</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-department.php" data-toggle="tooltip" title="Manage Department">
-                    <i class="fas fa-building"></i>
-                    <span class="links_name">Manage Department</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-manage.php" data-toggle="tooltip" title="Manage User">
-                    <i class="fas fa-users"></i>
-                    <span class="links_name">Manage User</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-patient.php" data-toggle="tooltip" title="Patients">
-                    <i class="fas fa-user-injured"></i>
-                    <span class="links_name">Patients</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-contact.php" data-toggle="tooltip" title="Contact">
-                    <i class="fas fa-comment-dots"></i>
-                    <span class="links_name">Contact</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-Faqs.php" data-toggle="tooltip" title="FAQ's">
-                    <i class="fas fa-question"></i>
-                    <span class="links_name">FAQ's</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin-dashboard.php?logout='1'" data-toggle="tooltip" title="Log out">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="links_name">Log out</span>
-                </a>
-            </li>
-        </ul>
+        <?php
+        if ($role == "admin") {
+        ?>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="admin-dashboard.php" data-toggle="tooltip" title="Dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span class="links_name">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-profile.php" data-toggle="tooltip" title="Admin Profile">
+                        <i class="far fa-address-card"></i>
+                        <span class="links_name">Admin Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-labreport.php" data-toggle="tooltip" title="Upload Lab Report">
+                        <i class="fas fa-file-upload"></i>
+                        <span class="links_name">Upload Lab Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-doctors.php" data-toggle="tooltip" title="Doctors">
+                        <i class="fas fa-stethoscope"></i>
+                        <span class="links_name">Doctors</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-department.php" data-toggle="tooltip" title="Manage Department">
+                        <i class="fas fa-building"></i>
+                        <span class="links_name">Manage Department</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-manage.php" data-toggle="tooltip" title="Manage User">
+                        <i class="fas fa-users"></i>
+                        <span class="links_name">Manage User</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-patient.php" data-toggle="tooltip" title="Patients">
+                        <i class="fas fa-user-injured"></i>
+                        <span class="links_name">Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-contact.php" data-toggle="tooltip" title="Contact">
+                        <i class="fas fa-comment-dots"></i>
+                        <span class="links_name">Contact</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-Faqs.php" data-toggle="tooltip" title="FAQ's">
+                        <i class="fas fa-question"></i>
+                        <span class="links_name">FAQ's</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-dashboard.php?logout='1'" data-toggle="tooltip" title="Log out">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="links_name">Log out</span>
+                    </a>
+                </li>
+            </ul>
+        <?php
+        } else if ($role == "lab_admin") {
+        ?>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="admin-dashboard.php" data-toggle="tooltip" title="Dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span class="links_name">Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-profile.php" data-toggle="tooltip" title="Admin Profile">
+                        <i class="far fa-address-card"></i>
+                        <span class="links_name">Admin Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-labreport.php" data-toggle="tooltip" title="Upload Lab Report">
+                        <i class="fas fa-file-upload"></i>
+                        <span class="links_name">Upload Lab Report</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-patient.php" data-toggle="tooltip" title="Patients">
+                        <i class="fas fa-user-injured"></i>
+                        <span class="links_name">Patients</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-dashboard.php?logout='1'" data-toggle="tooltip" title="Log out">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="links_name">Log out</span>
+                    </a>
+                </li>
+            </ul>
+        <?php
+        }
+        mysqli_close($nav_con);
+        ?>
     </div>
 
     <script>

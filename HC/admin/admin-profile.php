@@ -37,12 +37,6 @@ if (isset($_GET['logout'])) {
     <?php
     $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error());
 
-    $email = $_SESSION['email'];
-
-    $sql1 = "SELECT * FROM admin WHERE email='$email'";
-
-    $res1 = mysqli_query($con, $sql1);
-
     if (isset($_POST['update_photo'])) {
         $id = $_POST['id'];
 
@@ -105,6 +99,39 @@ if (isset($_GET['logout'])) {
             echo "<div class='text-danger alert alert-danger' style='position:absolute;top:10px;right:10px;z-index:101;'>Unable to change password</div>";
         }
     }
+
+    if (isset($_POST['update_all'])) {
+        $id = $_POST['id'];
+        $first_name = $_POST['fname'];
+        $last_name = $_POST['lname'];
+        $gender = $_POST['gender'];
+        $dob = $_POST['dob'];
+        $phone_number = $_POST['phone'];
+        $email = $_POST['email'];
+
+        $update_query = "UPDATE admin
+                        SET first_name='$first_name',
+                            last_name='$last_name',
+                            gender='$gender',
+                            dob='$dob',
+                            phone_number='$phone_number',
+                            email='$email'
+                        WHERE admin_id=$id";
+
+        $res = mysqli_query($con, $update_query);
+
+        if ($res) {
+            echo "<div class='text-success alert alert-success' style='position:absolute;top:10px;right:10px;z-index:101;'>Succesfully Updated</div>";
+        } else {
+            echo "<div class='text-danger alert alert-danger' style='position:absolute;top:10px;right:10px;z-index:101;'>Unable to Update</div>";
+        }
+    }
+
+    $email = $_SESSION['email'];
+
+    $sql1 = "SELECT * FROM admin WHERE email='$email'";
+
+    $res1 = mysqli_query($con, $sql1);
 
     $row1 = mysqli_fetch_assoc($res1);
 
@@ -214,6 +241,89 @@ if (isset($_GET['logout'])) {
 
                     <div>
                         Mobile : <?php echo $row1['phone_number']; ?>
+                    </div>
+                    <hr>
+                    <div>
+                        <a class="btn btn-info mx-auto" data-toggle="modal" data-target="#updModal<?php echo $row1['admin_id'] ?>" data-toggle="tooltip" title="Update">
+                            <i class="fas fa-user-edit"></i>
+                        </a>
+
+                        <!--Start of Update Modal -->
+                        <div class="modal fade" id="updModal<?php echo $row1['admin_id'] ?>" tabindex="-1" aria-labelledby="uModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="uModalLabel">Update</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form name="updateForm" action="admin-profile.php" method="POST" enctype="multipart/form-data" onsubmit="return(validate_updateForm())">
+
+                                            <input type="hidden" name="id" value="<?php echo $row1['admin_id']; ?>">
+
+                                            <div class="row my-3">
+                                                <div class="form-group col-sm-6">
+                                                    <label for="fname">First Name:</label>
+                                                    <input type="text" class="form-control" value="<?php echo $row1['first_name']; ?>" name="fname" id="fname">
+                                                </div>
+                                                <div class="form-group col-sm-6">
+                                                    <label for="lastname">Last Name:</label>
+                                                    <input type="text" class="form-control" id="lname" value="<?php echo $row1['last_name']; ?>" name="lname">
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="form-group col-12">
+                                                    <label for="">Gender:</label>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input ms-1" type="radio" value="Male" id="male" name="gender" <?php if ($row1['gender'] == "Male") echo "checked"; ?>>
+                                                        <label class="form-check-label" for="male">Male</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input ms-1" type="radio" value="Female" id="female" name="gender" <?php if ($row1['gender'] == "Female") echo "checked"; ?>>
+                                                        <label class="form-check-label" for="female">Female</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input ms-1" type="radio" value="Others" id="others" name="gender" <?php if ($row1['gender'] == "Others") echo "checked"; ?>>
+                                                        <label class="form-check-label" for="others">Others</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="form-group col-12">
+                                                    <label for="dob">Date of Birth:</label>
+                                                    <input type="date" class="form-control" id="dob" name="dob" value="<?php echo $row1['dob']; ?>">
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="form-group col-12">
+                                                    <label for="phone">Phone Number:</label>
+                                                    <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $row1['phone_number']; ?>">
+                                                </div>
+                                            </div>
+
+                                            <div class="row my-3">
+                                                <div class="form-group col-12">
+                                                    <label for="email">Email:</label>
+                                                    <input type="email" class="form-control" id="email" value="<?php echo $row1['email']; ?>" name="email">
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                                <input type="submit" value="Update" name="update_all" class="btn btn-success">
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of update modal -->
                     </div>
                     <hr>
                 </div>

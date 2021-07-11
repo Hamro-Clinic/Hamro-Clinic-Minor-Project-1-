@@ -40,15 +40,32 @@ if (isset($_GET['logout'])) {
         <hr>
         <?php
         $con = mysqli_connect("localhost", "root", "", "hcc_db") or die("Unable to connect" . mysqli_connect_error() . "<br>");
+
+        $find_id = "SELECT * FROM doctor WHERE email='{$_SESSION['doctor_email']}'";
+        $res_id = mysqli_query($con, $find_id);
+        $s_row = mysqli_fetch_assoc($res_id);
+        $doc_id = $s_row['doctor_id'];
+
+        date_default_timezone_set('Asia/Kathmandu');
+        $current_date = date('Y-m-d');
+
+        $today_count = "SELECT COUNT(appointment_id) AS tt FROM appointment WHERE doctor_id=$doc_id AND appointment_date='$current_date'";
+        $upcoming_count = "SELECT COUNT(appointment_id) AS ut FROM appointment WHERE doctor_id=$doc_id AND appointment_date>='$current_date'";
+
+        $today_count_result = mysqli_query($con, $today_count);
+        $upcoming_count_result = mysqli_query($con, $upcoming_count);
+
+        $trow = mysqli_fetch_assoc($today_count_result);
+        $urow = mysqli_fetch_assoc($upcoming_count_result);
         ?>
         <div class="container-fluid dashboard-cards p-md-2">
             <div class="card-1">
                 <h3>Today's Appointments</h3>
-                <h3>9</h3>
+                <h3><?php echo $trow['tt']; ?></h3>
             </div>
             <div class="card-3">
-                <h3>Upcomming Appointments</h3>
-                <h3>20</h3>
+                <h3>Upcoming Appointments</h3>
+                <h3><?php echo $urow['ut']; ?></h3>
             </div>
         </div>
     </div>
